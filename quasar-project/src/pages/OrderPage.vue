@@ -21,7 +21,7 @@
                 round
                 dense
                 icon="remove"
-                color="grey"
+                color="primary"
                 :disable="product.quantity <= 0"
                 @click="decreaseQuantity(product.id)"
               />
