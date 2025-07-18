@@ -2,24 +2,15 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
         <q-toolbar-title>
-          Quasar App
+          Product App
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
+    <!-- todo remove drawer -->
+    <q-drawer 
       v-model="leftDrawerOpen"
       show-if-above
       bordered
@@ -71,8 +62,4 @@ const linksList: EssentialLinkProps[] = [
 ];
 
 const leftDrawerOpen = ref(false);
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
 </script>
