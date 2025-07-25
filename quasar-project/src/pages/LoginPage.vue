@@ -5,8 +5,8 @@
         <div class="text-h6">Login</div>
       </q-card-section>
       <q-card-section>
-        <q-form >
-        <!-- @submit.prevent="login" -->
+        <q-form
+          @submit.prevent="login">
           <q-input v-model="identifier" label="Email or Username" required />
           <q-input v-model="password" label="Password" type="password" required />
           <q-btn label="Login" type="submit" color="primary" class="full-width q-mt-md" />
@@ -21,23 +21,23 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-// import { useRouter } from 'vue-router';
-// import { api } from 'boot/axios';
+import { useRouter } from 'vue-router';
+import { api } from 'boot/axios';
 
 const identifier = ref('');
 const password = ref('');
-// const router = useRouter();
+const router = useRouter();
 
-// async function login() {
-//   try {
-//     await api.post('/login', {
-//       identifier: identifier.value,
-//       password: password.value
-//     });
-//     router.push('/order');
-//   } catch (err) {
-//     // handle error (show notification, etc.)
-//     console.error(err);
-//   }
-// }
+async function login() {
+  try {
+    await api.post('/signin', {
+      identifier: identifier.value,
+      password: password.value
+    });
+    router.push('/order');
+  } catch (err) {
+    // handle error (show notification, etc.)
+    console.error(err);
+  }
+}
 </script> 
