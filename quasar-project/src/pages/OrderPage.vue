@@ -67,9 +67,9 @@ interface Product {
 const products = ref<Product[]>([]);
 
 function fetchProducts() {
-api.get(`/product`)
- .then(response => {
-products.value = response.data
+  api.get(`/product`)
+  .then(response => {
+  products.value = response.data
 // .map((item: any) => ({
 // ...item,
 // quantity: 0 // Initialize quantity to 0
@@ -82,7 +82,7 @@ products.value = response.data
 
 // Call fetchProducts when component is mounted
 onMounted(() => {
-fetchProducts();
+  fetchProducts();
 });
 
 const hasItems = computed(() => {
