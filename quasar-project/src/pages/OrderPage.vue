@@ -5,7 +5,7 @@
     <div class="row q-gutter-md">
       <q-card v-for="product in products" :key="product.id" class="product-card">
         <q-img
-          :src="product.image"
+          :src="product.imageUrl"
           :alt="product.name"
           height="200px"
         />
@@ -22,16 +22,16 @@
                 dense
                 icon="remove"
                 color="primary"
-                :disable="product.quantity <= 0"
+                :disable="product.amount <= 0"
                 @click="decreaseQuantity(product.id)"
               />
-              <div class="text-h6 q-px-md">{{ product.quantity }}</div>
+              <div class="text-h6 q-px-md">{{ product.amount }}</div>
               <q-btn
                 round
                 dense
                 icon="add"
                 color="primary"
-                :disable="product.quantity >= 10"
+                :disable="product.amount >= 10"
                 @click="increaseQuantity(product.id)"
               />
             </div>
@@ -53,77 +53,74 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { api } from 'boot/axios';
 
 interface Product {
   id: number;
   name: string;
   price: number;
-  image: string;
-  quantity: number;
+  imageUrl: string;
+  amount: number;
 }
 
-const products = ref<Product[]>([
-  {
-    id: 1,
-    name: 'Laptop',
-    price: 999.99,
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop',
-    quantity: 0
-  },
-  {
-    id: 2,
-    name: 'Smartphone',
-    price: 699.99,
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop',
-    quantity: 0
-  },
-  {
-    id: 3,
-    name: 'Headphones',
-    price: 199.99,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop',
-    quantity: 0
-  }
-]);
+const products = ref<Product[]>([]);
+
+function fetchProducts() {
+api.get(`${process.env.BASE_URL}/product`)
+ .then(response => {
+products.value = response.data
+// .map((item: any) => ({
+// ...item,
+// quantity: 0 // Initialize quantity to 0
+//  }));
+ })
+ .catch(err => {
+  console.log('Error fetching products:', err);
+ });
+}
+
+// Call fetchProducts when component is mounted
+onMounted(() => {
+fetchProducts();
+});
 
 const hasItems = computed(() => {
-  return products.value.some(product => product.quantity > 0);
+  return products.value.some(product => product.amount > 0);
 });
 
 function increaseQuantity(productId: number) {
   const product = products.value.find(p => p.id === productId);
-  if (product && product.quantity < 10) {
-    product.quantity++;
+  if (product && product.amount < 10) {
+    product.amount++;
   }
 }
 
 function decreaseQuantity(productId: number) {
   const product = products.value.find(p => p.id === productId);
-  if (product && product.quantity > 0) {
-    product.quantity--;
+  if (product && product.amount > 0) {
+    product.amount--;
   }
 }
 
 async function createOrder() {
-  const orderItems = products.value.filter(product => product.quantity > 0);
+  const orderItems = products.value.filter(product => product.amount > 0);
   
   if (orderItems.length === 0) return;
   
   try {
-    await api.post('/orders', {
+    await api.post('/product', {
       products: orderItems.map(item => ({
         id: item.id,
         name: item.name,
-        quantity: item.quantity,
+        quantity: item.amount,
         price: item.price
       }))
     });
     
     // Reset quantities after successful order
     products.value.forEach(product => {
-      product.quantity = 0;
+      product.amount = 0;
     });
     
     // Show success message (you can add a notification here)
@@ -132,6 +129,7 @@ async function createOrder() {
     console.error('Error creating order:', err);
   }
 }
+
 </script>
 
 <style scoped>
