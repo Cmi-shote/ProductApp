@@ -67,7 +67,7 @@ interface Product {
 const products = ref<Product[]>([]);
 
 function fetchProducts() {
-api.get(`${process.env.BASE_URL}/product`)
+api.get(`/product`)
  .then(response => {
 products.value = response.data
 // .map((item: any) => ({
