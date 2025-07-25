@@ -14,7 +14,7 @@ declare module 'vue' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const baseURL = process.env.BASE_URL ? process.env.BASE_URL : ""
+// const baseURL = process.env.BASE_URL ? process.env.BASE_URL : ""
 const api = axios.create({ baseURL: "https://product-backend-l29f.onrender.com/" });
 
 export default defineBoot(({ app }) => {
