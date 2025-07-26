@@ -36,6 +36,6 @@ const authStore = useAuthStore();
 
 function logout() {
   authStore.logout(); 
-  router.push('/login');
+  void router.push('/login');
 }
 </script>

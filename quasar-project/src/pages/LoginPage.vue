@@ -11,6 +11,10 @@
           <q-input v-model="password" label="Password" type="password" required />
           <q-btn label="Login" type="submit" color="primary" class="full-width q-mt-md" />
         </q-form>
+        <q-banner v-if="errorMessage" class="bg-red text-white q-mb-md">
+  {{ errorMessage }}
+</q-banner>
+
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Register" to="/register" />
@@ -48,7 +52,7 @@ async function login() {
 
     errorMessage.value = '';
     authStore.setToken(token);
-    router.push('/order');
+    await router.push('/order');
   } catch (err: any) {
     if (err.response && err.response.data && err.response.data.message) {
       errorMessage.value = err.response.data.message;

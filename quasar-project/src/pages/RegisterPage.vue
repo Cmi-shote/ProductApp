@@ -14,7 +14,10 @@
         </q-form>
 
         <q-card-section>
-        <div>errorMessage</div>
+       <q-banner v-if="errorMessage" class="bg-red text-white q-mb-md">
+  {{ errorMessage }}
+</q-banner>
+
       </q-card-section>
       </q-card-section>
       <q-card-actions align="right">
@@ -44,7 +47,7 @@ async function register() {
     })
       
     errorMessage.value = ""
-    router.push('/login');
+    await router.push('/login');
   } catch (err: any) {
     if (err.response && err.response.data && err.response.data.message) {
       errorMessage.value = err.response.data.message;

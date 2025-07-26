@@ -87,6 +87,12 @@ function fetchProducts() {
 
 // Call fetchProducts when component is mounted
 onMounted(() => {
+  authStore.loadTokenFromStorage();
+  if (!authStore.token) {
+    void router.push('/login'); // redirect if not logged in
+    return;
+  }
+  
   fetchProducts();
 });
 
@@ -132,12 +138,6 @@ async function createOrder() {
     console.log('Order created successfully!');
   } catch (err) {
     console.error('Error creating order:', err);
-  }
-}
-
-function checkUserIsLoggedIn() {
-  if (authStore.loadTokenFromStorage === null) {
-    router.push('/signin')
   }
 }
 
