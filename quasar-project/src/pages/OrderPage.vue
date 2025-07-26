@@ -55,6 +55,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { api } from 'boot/axios';
+import { useAuthStore } from 'src/stores/auth';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 interface Product {
   id: number;
@@ -70,10 +75,10 @@ function fetchProducts() {
   api.get(`/product`)
   .then(response => {
   products.value = response.data
-// .map((item: any) => ({
-// ...item,
-// quantity: 0 // Initialize quantity to 0
-//  }));
+  .map((item: any) => ({
+    ...item,
+    quantity: 0 // Initialize quantity to 0
+  }));
  })
  .catch(err => {
   console.log('Error fetching products:', err);
@@ -127,6 +132,12 @@ async function createOrder() {
     console.log('Order created successfully!');
   } catch (err) {
     console.error('Error creating order:', err);
+  }
+}
+
+function checkUserIsLoggedIn() {
+  if (authStore.loadTokenFromStorage === null) {
+    router.push('/signin')
   }
 }
 

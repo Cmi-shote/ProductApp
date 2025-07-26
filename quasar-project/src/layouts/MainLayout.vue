@@ -6,6 +6,17 @@
           Product App
         </q-toolbar-title>
 
+        <q-space />
+
+        <!-- Show logout only on /order page -->
+        <q-btn
+          v-if="route.path === '/order'"
+          color="negative"
+          label="Logout"
+          @click="logout"
+          flat
+          dense
+        />
       </q-toolbar>
     </q-header>
 
@@ -16,27 +27,15 @@
 </template>
 
 <script setup lang="ts">
-// import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from 'src/stores/auth';
 
-// const linksList: EssentialLinkProps[] = [
-//   {
-//     title: 'Register',
-//     caption: 'Create Account',
-//     icon: 'person_add',
-//     link: '/register'
-//   },
-//   {
-//     title: 'Login',
-//     caption: 'Sign In',
-//     icon: 'login',
-//     link: '/login'
-//   },
-//   {
-//     title: 'Order',
-//     caption: 'Create Order',
-//     icon: 'shopping_cart',
-//     link: '/order'
-//   }
-// ];
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 
+function logout() {
+  authStore.logout(); 
+  router.push('/login');
+}
 </script>

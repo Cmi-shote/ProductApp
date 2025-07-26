@@ -12,6 +12,10 @@
           <q-input v-model="password" label="Password" type="password" required />
           <q-btn label="Register" type="submit" color="primary" class="full-width q-mt-md" />
         </q-form>
+
+        <q-card-section>
+        <div>errorMessage</div>
+      </q-card-section>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Login" to="/login" />
@@ -28,6 +32,7 @@ import { api } from 'boot/axios';
 const username = ref('');
 const email = ref('');
 const password = ref('');
+const errorMessage = ref('');
 const router = useRouter();
 
 async function register() {
@@ -36,11 +41,17 @@ async function register() {
       username: username.value,
       email: email.value,
       password: password.value
-    });
+    })
+      
+    errorMessage.value = ""
     router.push('/login');
-  } catch (err) {
-    // handle error (show notification, etc.)
-    console.error(err);
+  } catch (err: any) {
+    if (err.response && err.response.data && err.response.data.message) {
+      errorMessage.value = err.response.data.message;
+    } else {
+      errorMessage.value = 'An unexpected error occurred.';
+    }
+    console.log(err);
   }
 }
 </script> 
