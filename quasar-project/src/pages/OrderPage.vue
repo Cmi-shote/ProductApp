@@ -72,17 +72,16 @@ interface Product {
 const products = ref<Product[]>([]);
 
 function fetchProducts() {
-  api.get(`/product`)
-  .then(response => {
-  products.value = response.data
-  .map((item: any) => ({
-    ...item,
-    quantity: 0 // Initialize quantity to 0
-  }));
- })
- .catch(err => {
-  console.log('Error fetching products:', err);
- });
+  api.get('/product')
+    .then(response => {
+      products.value = response.data.map((item: Omit<Product, 'amount'>) => ({
+        ...item,
+        amount: 0
+      }));
+    })
+    .catch(err => {
+      console.log('Error fetching products:', err);
+    });
 }
 
 // Call fetchProducts when component is mounted
