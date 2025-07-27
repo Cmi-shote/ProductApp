@@ -137,7 +137,7 @@ async function createOrder() {
     // Show success message (you can add a notification here)
     console.log('Order created successfully!');
   } catch (err) {
-    console.error('Error creating order:', err);
+    console.log('Error creating order:', err);
   }
 }
 
