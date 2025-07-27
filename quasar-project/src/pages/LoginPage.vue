@@ -47,7 +47,7 @@ async function login() {
   };
 
   try {
-    const response = await api.post('/signin', payload);
+    const response = await api.post('/auth/signin', payload);
     const token = response.data.token;
 
     errorMessage.value = '';

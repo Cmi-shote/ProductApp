@@ -40,7 +40,7 @@ const router = useRouter();
 
 async function register() {
   try {
-    await api.post('/signup', {
+    await api.post('/auth/signup', {
       username: username.value,
       email: email.value,
       password: password.value
