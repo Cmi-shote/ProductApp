@@ -46,17 +46,18 @@ async function login() {
     password: password.value
   };
 
+
   try {
     const response = await api.post('/auth/signin', payload);
-    const token = response.data.token;
+    const token = response.data;
 
-    errorMessage.value = '';
-    authStore.setToken(token);
-    await router.push('/order');
+      errorMessage.value = '';
+      authStore.setToken(token);
+      await router.push('/order');
   } catch (err) {
     const error = err as { response?: { data?: { message?: string } } };
     errorMessage.value = error.response?.data?.message || 'Invalid credentials';
-    console.log(err)
+    console.log(err);
   }
 }
 

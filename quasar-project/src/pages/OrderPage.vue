@@ -22,16 +22,16 @@
                 dense
                 icon="remove"
                 color="primary"
-                :disable="product.amount <= 0"
+                :disable="product.currentAmount <= 0"
                 @click="decreaseQuantity(product.id)"
               />
-              <div class="text-h6 q-px-md">{{ product.amount }}</div>
+              <div class="text-h6 q-px-md">{{ product.currentAmount }}</div>
               <q-btn
                 round
                 dense
                 icon="add"
                 color="primary"
-                :disable="product.amount >= 10"
+                :disable="product.currentAmount >= product.amount"
                 @click="increaseQuantity(product.id)"
               />
             </div>
@@ -60,6 +60,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const authStore = useAuthStore();
+authStore.loadTokenFromStorage();
 
 interface Product {
   id: number;
@@ -67,6 +68,7 @@ interface Product {
   price: number;
   imageUrl: string;
   amount: number;
+  currentAmount: number;
 }
 
 const products = ref<Product[]>([]);
@@ -74,9 +76,9 @@ const products = ref<Product[]>([]);
 function fetchProducts() {
   api.get('/product')
     .then(response => {
-      products.value = response.data.map((item: Omit<Product, 'amount'>) => ({
+      products.value = response.data.map((item: Omit<Product, 'currentAmount'>) => ({
         ...item,
-        amount: 0
+        currentAmount: 0
       }));
     })
     .catch(err => {
@@ -86,7 +88,6 @@ function fetchProducts() {
 
 // Call fetchProducts when component is mounted
 onMounted(() => {
-  authStore.loadTokenFromStorage();
   if (!authStore.token) {
     void router.push('/login'); // redirect if not logged in
     return;
@@ -96,41 +97,61 @@ onMounted(() => {
 });
 
 const hasItems = computed(() => {
-  return products.value.some(product => product.amount > 0);
+  return products.value.some(product => product.currentAmount > 0);
 });
 
 function increaseQuantity(productId: number) {
   const product = products.value.find(p => p.id === productId);
-  if (product && product.amount < 10) {
-    product.amount++;
+  if (product && product.currentAmount < product.amount) {
+    product.currentAmount++;
   }
 }
 
 function decreaseQuantity(productId: number) {
   const product = products.value.find(p => p.id === productId);
-  if (product && product.amount > 0) {
-    product.amount--;
+  if (product && product.currentAmount > 0) {
+    product.currentAmount--;
   }
 }
 
 async function createOrder() {
-  const orderItems = products.value.filter(product => product.amount > 0);
+  const orderItems = products.value.filter(product => product.currentAmount > 0);
+
+  console.log("simi", orderItems)
+  console.log("tokem", authStore.token)
   
   if (orderItems.length === 0) return;
   
   try {
-    await api.post('/product', {
-      products: orderItems.map(item => ({
-        id: item.id,
-        name: item.name,
-        quantity: item.amount,
-        price: item.price
-      }))
-    });
+    await api.post(
+      '/order', 
+      {
+        items: orderItems
+      },
+      {
+        headers: {
+          authorization: authStore.token
+        }
+      }
+    );
+
+    for (const item of orderItems) {
+      await api.post(
+        '/product',
+        {
+          amount: item.amount - item.currentAmount
+        },
+        {
+          params: {
+            id: item.id
+          }
+        }
+      );
+    }
     
     // Reset quantities after successful order
     products.value.forEach(product => {
-      product.amount = 0;
+      product.currentAmount = 0;
     });
     
     // Show success message (you can add a notification here)
