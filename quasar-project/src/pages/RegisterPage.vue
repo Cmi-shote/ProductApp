@@ -48,13 +48,10 @@ async function register() {
       
     errorMessage.value = ""
     await router.push('/login');
-  } catch (err: any) {
-    if (err.response && err.response.data && err.response.data.message) {
-      errorMessage.value = err.response.data.message;
-    } else {
-      errorMessage.value = 'An unexpected error occurred.';
-    }
-    console.log(err);
+  } catch (err) {
+    const error = err as { response?: { data?: { message?: string } } };
+    errorMessage.value = error.response?.data?.message || 'Invalid credentials';
+    console.log(err)
   }
 }
 </script> 

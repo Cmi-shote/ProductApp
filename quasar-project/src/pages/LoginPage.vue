@@ -53,13 +53,10 @@ async function login() {
     errorMessage.value = '';
     authStore.setToken(token);
     await router.push('/order');
-  } catch (err: any) {
-    if (err.response && err.response.data && err.response.data.message) {
-      errorMessage.value = err.response.data.message;
-    } else {
-      errorMessage.value = 'Invalid Credentials.';
-    }
-    console.log(err);
+  } catch (err) {
+    const error = err as { response?: { data?: { message?: string } } };
+    errorMessage.value = error.response?.data?.message || 'Invalid credentials';
+    console.log(err)
   }
 }
 
