@@ -9,7 +9,15 @@
           @submit.prevent="register">
           <q-input v-model="username" label="Username" required />
           <q-input v-model="email" label="Email" type="email" required />
-          <q-input v-model="password" label="Password" type="password" required />
+          <q-input v-model="password" label="Password" :type="showPassword ? 'text' : 'password'" required >
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showPassword = !showPassword"
+              />
+            </template>
+          </q-input>
           <q-btn label="Register" type="submit" color="primary" class="full-width q-mt-md" />
         </q-form>
 
@@ -32,6 +40,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from 'boot/axios';
 
+const showPassword = ref(false);
 const username = ref('');
 const email = ref('');
 const password = ref('');

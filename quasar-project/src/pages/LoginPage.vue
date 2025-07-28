@@ -5,16 +5,27 @@
         <div class="text-h6">Login</div>
       </q-card-section>
       <q-card-section>
-        <q-form
-          @submit.prevent="login">
+        <q-form @submit.prevent="login">
           <q-input v-model="email" label="Email" required />
-          <q-input v-model="password" label="Password" type="password" required />
+          <q-input 
+            v-model="password" 
+            label="Password" 
+            :type="showPassword ? 'text' : 'password'"
+            required
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showPassword = !showPassword"
+              />
+            </template>
+          </q-input>
           <q-btn label="Login" type="submit" color="primary" class="full-width q-mt-md" />
         </q-form>
         <q-banner v-if="errorMessage" class="bg-red text-white q-mb-md">
-  {{ errorMessage }}
-</q-banner>
-
+          {{ errorMessage }}
+        </q-banner>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Register" to="/register" />
@@ -29,6 +40,7 @@ import { useRouter } from 'vue-router';
 import { api } from 'boot/axios';
 import { useAuthStore } from 'src/stores/auth'
 
+const showPassword = ref(false);
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
