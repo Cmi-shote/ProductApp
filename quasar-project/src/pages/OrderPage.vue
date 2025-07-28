@@ -116,9 +116,6 @@ function decreaseQuantity(productId: number) {
 
 async function createOrder() {
   const orderItems = products.value.filter(product => product.currentAmount > 0);
-
-  console.log("simi", orderItems)
-  console.log("tokem", authStore.token)
   
   if (orderItems.length === 0) return;
   
@@ -126,7 +123,10 @@ async function createOrder() {
     await api.post(
       '/order', 
       {
-        items: orderItems
+        items: orderItems.map(item => ({
+          productId: item.id,
+          quantity: item.currentAmount
+        }))
       },
       {
         headers: {
@@ -136,15 +136,10 @@ async function createOrder() {
     );
 
     for (const item of orderItems) {
-      await api.post(
-        '/product',
+      await api.put(
+        `/product/${item.id}`,
         {
           amount: item.amount - item.currentAmount
-        },
-        {
-          params: {
-            id: item.id
-          }
         }
       );
     }
@@ -154,7 +149,6 @@ async function createOrder() {
       product.currentAmount = 0;
     });
     
-    // Show success message (you can add a notification here)
     console.log('Order created successfully!');
   } catch (err) {
     console.log('Error creating order:', err);
