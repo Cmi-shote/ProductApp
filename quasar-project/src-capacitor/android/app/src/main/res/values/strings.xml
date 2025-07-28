@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ProductApp</string>
+    <string name="title_activity_main">ProductApp</string>
+    <string name="package_name">com.similoluwa.productapp</string>
+    <string name="custom_url_scheme">com.similoluwa.productapp</string>
+</resources>
