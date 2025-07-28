@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from 'src/stores/auth';
-import { ref, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { api } from 'boot/axios';
 
 const route = useRoute();
@@ -50,19 +50,31 @@ function logout() {
   void router.push('/login');
 }
 
-onMounted(() => {
-  api.get('/auth/user', {
-    headers: {
-      authorization: authStore.token
-    }
-  }).then(response => {
-    user.value = response.data;
-  }).catch(err => {
-    console.log('Error fetching user:', err);
-    // If token is invalid, redirect to login
-    if (err.response?.status === 401) {
-      void router.push('/login');
-    }
-  });
-})
+function fetchUser() {
+  if (authStore.token) {
+    api.get('/auth/user', {
+      headers: {
+        authorization: authStore.token
+      }
+    }).then(response => {
+      user.value = response.data;
+    }).catch(err => {
+      console.log('Error fetching user:', err);
+      // If token is invalid, redirect to login
+      if (err.response?.status === 401) {
+        void router.push('/login');
+      }
+    });
+  }
+}
+
+// Watch for route changes and fetch user data when navigating to /order
+watch(() => route.path, (newPath) => {
+  if (newPath === '/order') {
+    fetchUser();
+  } else {
+    // Clear user data when leaving /order page
+    user.value = undefined;
+  }
+});
 </script>
